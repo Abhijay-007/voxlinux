@@ -1,0 +1,12 @@
+pub mod launch_app;
+pub mod open_file;
+pub mod set_brightness;
+pub mod inc_brightness;
+pub mod dec_brightness;
+pub mod cpu_performance;
+pub mod cpu_powersave;
+pub mod cpu_get;
+pub mod wifi_on;
+pub mod wifi_off;
+pub mod set_volume;
+pub mod sleep_system;
