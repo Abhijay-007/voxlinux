@@ -7,7 +7,8 @@ use crate::{
 };
 
 pub fn parse_input(input: &str) -> Result<Intent, IntentError> {
-    let text = input.to_lowercase();
+    // STEP 1 already mentioned (you should also add trim for correctness)
+    let text = input.trim().to_lowercase();
 
     // baseline rules
     let launch = Regex::new(r"(open|launch|start)\s+([a-z0-9_\-./]+)").unwrap();
@@ -114,7 +115,74 @@ pub fn parse_input(input: &str) -> Result<Intent, IntentError> {
         });
     }
 
+    // ===========================
+    // STEP 2 — NEW RULES MOVE HERE
+    // ===========================
+
+    // wifi connect <ssid> [password]
+    // wifi connect (auto mode)
+    let wifi_connect_auto = Regex::new(r#"^wifi\s+connect$"#).unwrap();
+    if wifi_connect_auto.is_match(&text) {
+        return Ok(Intent {
+            intent_type: IntentType::WifiConnect,
+            parameters: json!({}), // auto connect behavior
+        });
+    }
+
+    // wifi connect SSID [PASSWORD]
+    let wifi_connect = Regex::new(r#"^wifi\s+connect\s+['"]?(.+?)['"]?(?:\s+['"]?(.+?)['"]?)?$"#).unwrap();
+    if let Some(c) = wifi_connect.captures(&text) {
+        return Ok(Intent {
+            intent_type: IntentType::WifiConnect,
+            parameters: json!({
+                "ssid": c.get(1).unwrap().as_str(),
+                              "password": c.get(2).map(|m| m.as_str()),
+            }),
+        });
+    }
+
+
+    // battery
+    let battery = Regex::new(r"^(battery|get\s+battery|battery\s+status)$").unwrap();
+    if battery.is_match(&text) {
+        return Ok(Intent {
+            intent_type: IntentType::BatteryStatus,
+            parameters: json!({}),
+        });
+    }
+
+    // media
+    let media = Regex::new(r"^media\s+(play|pause|next|prev)$").unwrap();
+    if let Some(c) = media.captures(&text) {
+        let action = c.get(1).unwrap().as_str();
+        return Ok(match action {
+            "next" => Intent { intent_type: IntentType::MediaNext, parameters: json!({}) },
+                  "prev" => Intent { intent_type: IntentType::MediaPrev, parameters: json!({}) },
+                  _ => Intent { intent_type: IntentType::MediaPlayPause, parameters: json!({}) },
+        });
+    }
+
+    // lock / lock screen
+    let lock = Regex::new(r"^lock(\s+screen)?$").unwrap();
+    if lock.is_match(&text) {
+        return Ok(Intent {
+            intent_type: IntentType::LockScreen,
+            parameters: json!({}),
+        });
+    }
+
+    // bluetooth
+    let bt = Regex::new(r"^bluetooth\s+(on|off|toggle)$").unwrap();
+    if let Some(c) = bt.captures(&text) {
+        return Ok(Intent {
+            intent_type: IntentType::BluetoothToggle,
+            parameters: json!({ "action": c.get(1).unwrap().as_str() }),
+        });
+    }
+
+    // ===========================
+    // DO NOT MOVE THIS
+    // ===========================
+
     Err(IntentError::ParseError)
 }
-
-

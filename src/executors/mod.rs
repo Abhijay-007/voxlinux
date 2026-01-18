@@ -10,3 +10,11 @@ pub mod wifi_on;
 pub mod wifi_off;
 pub mod set_volume;
 pub mod sleep_system;
+pub mod wifi_connect;
+pub mod battery_status;
+pub mod lock_screen;
+pub mod bluetooth_toggle;
+pub mod media_playpause;
+pub mod media_next;
+pub mod media_prev;
+

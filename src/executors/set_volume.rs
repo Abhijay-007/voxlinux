@@ -33,3 +33,9 @@ impl IntentExecutor for SetVolumeExecutor {
         Err(IntentError::ProcessFailed)
     }
 }
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> 244ee09 (message)

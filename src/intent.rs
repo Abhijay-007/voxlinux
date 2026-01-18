@@ -7,17 +7,25 @@ pub enum IntentType {
     SetBrightness,
     IncreaseBrightness,
     DecreaseBrightness,
-
-    // new kernel intents
+    // kernel
     SetCpuPerformance,
     SetCpuPowersave,
     GetCpuGovernor,
     WifiOn,
     WifiOff,
-    SetVolume,
     SleepSystem,
+    SetVolume,
+    // new
+    WifiConnect,
+    BatteryStatus,
+    MediaPlayPause,
+    MediaNext,
+    MediaPrev,
+    LockScreen,
+    BluetoothToggle,
 }
 
+#[derive(Debug, Clone)]
 pub struct Intent {
     pub intent_type: IntentType,
     pub parameters: Value,
